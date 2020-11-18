@@ -1,3 +1,5 @@
+// Copyright (c) 2020 xin.
+
 #ifndef _OPERATOR_H_
 #define _OPERATOR_H_
 
@@ -8,7 +10,6 @@
 
 #if (PDFLAG==1) || (PDFLAG==2)
 #   include <m_pd.h>
-#   define FTYPE        t_float
 #   define FMAX         FLT_MAX
 #   define FMIN         FlT_MIN
 #   define SIN          sinf

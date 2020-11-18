@@ -1,0 +1,20 @@
+#N canvas 578 594 345 221 12;
+#X obj 32 93 hsl 128 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X obj 32 176 hsl 128 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 178 93 5 2 65536 0 - - -;
+#X text 11 16 Shape phasor [0 \, 1].;
+#X text 11 37 arg1 -> step number (default==256) arg2 -> active (default==0)
+, f 35;
+#X obj 254 93 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 254 116 active \$1;
+#X msg 178 116 step \$1;
+#X obj 29 153 xin/psStep;
+#X connect 0 0 8 0;
+#X connect 2 0 7 0;
+#X connect 5 0 6 0;
+#X connect 6 0 8 0;
+#X connect 7 0 8 0;
+#X connect 8 0 1 0;
