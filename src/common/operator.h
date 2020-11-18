@@ -4,26 +4,29 @@
 /***** start of definition *******************************************************/
 
 #include <math.h>
-#include <m_pd.h>
 #include <float.h>
 
-#if PDFLAG==1
-#include <m_pd.h>
-#define FTYPE       t_float
-#define FMAX        FLT_MAX
-#define FMIN        FlT_MIN
-
-#elif PDFLAG==2
-#include <m_pd.h>
-#define FTYPE       t_sample
-#define FMAX        FLT_MAX
-#define FMIN        FlT_MIN
-
+#if (PDFLAG==1) || (PDFLAG==2)
+#   include <m_pd.h>
+#   define FTYPE        t_float
+#   define FMAX         FLT_MAX
+#   define FMIN         FlT_MIN
+#   define SIN          sinf
+#   define COS          cosf
+#   define TAN          tanf
+#   define FMOD         fmodf
+#   define POW          powf
+#   define FLOOR        floorf
+#   define NEXTAFTER    nextafterf
+#   if PDFLAG==1
+#       define FTYPE    t_float
+#   else
+#       define FTYPE    t_sample
+#   endif
 #else
-#define FTYPE       double
-#define FMAX        DBL_MAX
-#define FMIN        DBL_MIN
-
+#   define FTYPE        double
+#   define FMAX         DBL_MAX
+#   define FMIN         DBL_MIN
 #endif
 
 /***** constant ******************************************************************/
@@ -64,6 +67,8 @@ FTYPE cosecant(FTYPE _x);
 FTYPE secant(FTYPE _x);
 FTYPE cotangent(FTYPE _x);
 
+FTYPE roundFloor(FTYPE _x, FTYPE _base);
+
 FTYPE convertB2U(FTYPE _in);
 FTYPE convertU2B(FTYPE _in);
 FTYPE scaleX2U(FTYPE _in, FTYPE _min, FTYPE _max);
@@ -84,10 +89,10 @@ FTYPE shiftHalf4Phasor(FTYPE _in, FTYPE _ratio);
 FTYPE shiftQuarter4Phasor(FTYPE _in, FTYPE _ratio);
 FTYPE compHalf4Phasor(FTYPE _in, FTYPE _amount);
 FTYPE compQuarter4Phasor(FTYPE _in, FTYPE _amount);
+FTYPE phaseTriangle(FTYPE _in);
+FTYPE reduceQuantum4Phasor(FTYPE _in, int _quantum);
 
-/***** function definition *******************************************************/
-
-/*---- arithmetic ----*/
+/***** function - arithmetic *****************************************************/
 
 inline FTYPE add(FTYPE _v1, FTYPE _v2) {
     return _v1 + _v2;
@@ -106,7 +111,7 @@ inline FTYPE div(FTYPE _v1, FTYPE _v2) {
 }
 
 inline FTYPE modulo(FTYPE _v1, FTYPE _v2) {
-    return (_v2!=0) ? fmod(_v1, _v2) : 0;
+    return (_v2!=0) ? FMOD(_v1, _v2) : 0;
 }
 
 inline int sign(FTYPE _in) {
@@ -126,7 +131,7 @@ inline FTYPE meanA(FTYPE *_x, int _len) {
 inline FTYPE meanG(FTYPE *_x, int _len) {
     FTYPE value = *_x;
     for(int i=1; i<_len; i++) value *= *(_x+i);
-    return pow(value, 1/_len);
+    return POW(value, 1/_len);
 }
 
 inline FTYPE meanH(FTYPE *_x, int _len) {
@@ -136,15 +141,15 @@ inline FTYPE meanH(FTYPE *_x, int _len) {
 }
 
 inline FTYPE sine(FTYPE _x) {
-    return (_x==0.5||_x==1) ? 0 : sin(_x*TWOPI);
+    return (_x==0.5||_x==1) ? 0 : SIN(_x*TWOPI);
 }
 
 inline FTYPE cosine(FTYPE _x) {
-    return (_x==0.25||_x==0.75) ? 0 : cos(_x*TWOPI);
+    return (_x==0.25||_x==0.75) ? 0 : COS(_x*TWOPI);
 }
 
 inline FTYPE tangent(FTYPE _x) {
-    return (_x==0.25||_x==0.75) ? FMAX : ((_x==0.5||_x==1) ? 0 : tan(_x*TWOPI));
+    return (_x==0.25||_x==0.75) ? FMAX : ((_x==0.5||_x==1) ? 0 : TAN(_x*TWOPI));
 }
 
 inline FTYPE cosecant(FTYPE _x) {
@@ -159,7 +164,11 @@ inline FTYPE cotangent(FTYPE _x) {
     return reciprocal(tangent(_x));
 }
 
-/*---- bipolar and unipolar operation ----*/
+inline FTYPE roundFloor(FTYPE _x, FTYPE _base) {
+    return FLOOR(_x*reciprocal(_base)) * _base;
+}
+
+/***** function - bipolar and unipolar operation *********************************/
 
 inline FTYPE convertB2U(FTYPE _in) {
     return (_in+1)*0.5;
@@ -185,47 +194,32 @@ inline FTYPE flip4B(FTYPE _in) {
     return _in*-1;
 }
 
-/*--- clipper ---*/
+/***** function - clipper ********************************************************/
 
 inline FTYPE clipCC(FTYPE _in, FTYPE _min, FTYPE _max) {
     return (_min<=_in&&_in<=_max) ? _in : ((_in<_min) ? _min : _max);
 }
 
 inline FTYPE clipOO(FTYPE _in, FTYPE _min, FTYPE _max) {
-    FTYPE output = 0;
-
-    if(PDFLAG==1||PDFLAG==2) output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafterf(_min, _max) : nextafterf(_max, _min));
-    else                     output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafter(_min, _max) : nextafter(_max, _min));
-
-    return output;
+    return (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? NEXTAFTER(_min, _max) : NEXTAFTER(_max, _min));
 }
 
 inline FTYPE clipOC(FTYPE _in, FTYPE _min, FTYPE _max) {
-    FTYPE output = 0;
-
-    if(PDFLAG==1||PDFLAG==2) output = (_min<_in&&_in<=_max) ? _in : ((_in<=_min) ? nextafterf(_min, _max) : _max);
-    else                     output = (_min<_in&&_in<=_max) ? _in : ((_in<=_min) ? nextafter(_min, _max) : _max);
-
-    return output;
+    return (_min<_in&&_in<=_max) ? _in : ((_in<=_min) ? NEXTAFTER(_min, _max) : _max);
 }
 
 inline FTYPE clipCO(FTYPE _in, FTYPE _min, FTYPE _max) {
-    FTYPE output = 0;
-
-    if(PDFLAG==1||PDFLAG==2) output = (_min<=_in&&_in<_max) ? _in : ((_in<_min) ? _min : nextafterf(_max, _min));
-    else                     output = (_min<=_in&&_in<_max) ? _in : ((_in<_min) ? _min: nextafter(_max, _min));
-
-    return output;
+    return (_min<=_in&&_in<_max) ? _in : ((_in<_min) ? _min : NEXTAFTER(_max, _min));
 }
 
-/*---- shaping or easing functions for phasor ----*/
+/***** function - shaping or easing functions for phasor *************************/
 
 inline FTYPE easeInExponent4Phasor(FTYPE _in, FTYPE _curve) {
-    return (0<_curve && _curve<1) ? pow(_in, reciprocal(1-_curve)) : ((_curve<=0) ? _in : (_in==1));
+    return (0<_curve && _curve<1) ? POW(_in, reciprocal(1-_curve)) : ((_curve<=0) ? _in : (_in==1));
 }
 
 inline FTYPE easeOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
-    return (0<_curve && _curve<1) ? pow(_in, 1-_curve) : ((_curve<=0) ? _in : (_in!=0));
+    return (0<_curve && _curve<1) ? POW(_in, 1-_curve) : ((_curve<=0) ? _in : (_in!=0));
 }
 
 inline FTYPE easeInOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
@@ -233,8 +227,8 @@ inline FTYPE easeInOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
 
     if(0<_curve&&_curve<1)
     {
-        if(0<=_in && _in<=0.5)      output = scaleU2X(pow(scaleX2U(_in, 0, 0.5), reciprocal(1-_curve)), 0, 0.5);
-        else if(0.5<=_in && _in<=1) output = scaleU2X(pow(scaleX2U(_in, 0.5, 1), 1-_curve), 0.5, 1);
+        if(0<=_in && _in<=0.5)      output = scaleU2X(POW(scaleX2U(_in, 0, 0.5), reciprocal(1-_curve)), 0, 0.5);
+        else if(0.5<=_in && _in<=1) output = scaleU2X(POW(scaleX2U(_in, 0.5, 1), 1-_curve), 0.5, 1);
     }
     else
     {
@@ -249,8 +243,8 @@ inline FTYPE easeOutInExponent4Phasor(FTYPE _in, FTYPE _curve) {
 
     if(0<_curve&&_curve<1)
     {
-        if(0<=_in && _in<0.5)       output = scaleU2X(pow(scaleX2U(_in, 0, 0.5), 1-_curve), 0, 0.5);
-        else if(0.5<_in && _in<=1)  output = scaleU2X(pow(scaleX2U(_in, 0.5, 1), reciprocal(1-_curve)), 0.5, 1);
+        if(0<=_in && _in<0.5)       output = scaleU2X(POW(scaleX2U(_in, 0, 0.5), 1-_curve), 0, 0.5);
+        else if(0.5<_in && _in<=1)  output = scaleU2X(POW(scaleX2U(_in, 0.5, 1), reciprocal(1-_curve)), 0.5, 1);
     }
     else
     {
@@ -336,19 +330,13 @@ inline FTYPE compQuarter4Phasor(FTYPE _in, FTYPE _amount) {
     return output;
 }
 
+inline FTYPE phaseTriangle(FTYPE _in) {
+    return (_in*2<=1) ? _in*2 : flip4U(_in*2-1);
+}
 
-
-
-
-// FTYPE repeat4Phasor(FTYPE _in, FTYPE _num) {
-// 	return modulo(_in*2);
-// }
-
-// FTYPE convertPhasor2Triangle(FTYPE _in, FTYPE _num) {
-// 	FTYPE output = _in*2;
-// 	return (output<=1) ? output : flip4U(output-1);
-// }
-
+inline FTYPE reduceQuantum4Phasor(FTYPE _in, int _quantum) {
+    return roundFloor(_in, reciprocal(_quantum)) * reciprocal(1-reciprocal(_quantum));
+}
 
 /***** end of definition *********************************************************/
 

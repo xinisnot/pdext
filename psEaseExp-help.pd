@@ -11,7 +11,7 @@
 , f 29;
 #X msg 178 116 curve \$1;
 #X obj 29 153 xin/psEaseExp;
-#X text 11 16 Ease unipolar [0 \, 1] exponentially.;
+#X text 11 16 Ease phasor [0 \, 1] exponentially.;
 #X connect 0 0 7 0;
 #X connect 2 0 7 0;
 #X connect 3 0 6 0;

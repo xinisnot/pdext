@@ -9,9 +9,9 @@
 #X floatatom 178 93 5 0 1 0 - - -;
 #X obj 29 153 xin/psComp;
 #X msg 178 116 amount \$1;
-#X text 11 16 Shape unipolar [0 \, 1].;
 #X text 11 36 arg1 -> ratio (default==0) arg2 -> mode (default==0)
 , f 27;
+#X text 11 16 Shape phasor [0 \, 1].;
 #X connect 0 0 5 0;
 #X connect 2 0 3 0;
 #X connect 3 0 5 0;

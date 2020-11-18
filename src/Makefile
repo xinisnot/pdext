@@ -9,6 +9,8 @@ all:	clear \
 		psShift \
 		psFlip \
 		psComp \
+		psStep \
+		pTriangle \
 		clean
 
 psEaseExp:
@@ -21,6 +23,12 @@ psFlip:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 psComp:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+psStep:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+pTriangle:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup

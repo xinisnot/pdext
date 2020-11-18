@@ -7,14 +7,14 @@
 1;
 #X msg 254 116 mode \$1;
 #X floatatom 178 93 5 0 1 0 - - -;
-#X text 11 16 Shape unipolar [0 \, 1].;
 #X obj 29 153 xin/psShift;
 #X msg 178 116 ratio \$1;
 #X text 11 37 arg1 -> ratio (default==0.5) arg2 -> mode (default==0)
 , f 29;
-#X connect 0 0 6 0;
+#X text 11 16 Shape phasor [0 \, 1].;
+#X connect 0 0 5 0;
 #X connect 2 0 3 0;
-#X connect 3 0 6 0;
-#X connect 4 0 7 0;
-#X connect 6 0 1 0;
-#X connect 7 0 6 0;
+#X connect 3 0 5 0;
+#X connect 4 0 6 0;
+#X connect 5 0 1 0;
+#X connect 6 0 5 0;
