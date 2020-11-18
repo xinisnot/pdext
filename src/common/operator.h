@@ -66,7 +66,6 @@ FTYPE tangent(FTYPE _x);
 FTYPE cosecant(FTYPE _x);
 FTYPE secant(FTYPE _x);
 FTYPE cotangent(FTYPE _x);
-
 FTYPE roundFloor(FTYPE _x, FTYPE _base);
 
 FTYPE convertB2U(FTYPE _in);
@@ -319,7 +318,6 @@ inline FTYPE compQuarter4Phasor(FTYPE _in, FTYPE _amount) {
             if(_in<0.75-_amount*0.25)       output = scaleU2X(scaleX2U(_in, 0.5, 0.75-_amount*0.25), 0.5, 0.75);
             else if(0.75+_amount*0.25<_in)  output = scaleU2X(scaleX2U(_in, 0.75+_amount*0.25, 1), 0.75, 1);
             else                            output = 0.75;
-
         }
     }
     else
