@@ -19,7 +19,7 @@ typedef struct _psShift {
 /***** method ********************************************************************/
 
 void onBangMsg(t_psShift *_x) {
-	(_x->mode==0) ? outlet_float(_x->out, (t_float)shiftHalf4U(_x->input, _x->ratio)) : outlet_float(_x->out, (t_float)shiftQuarter4U(_x->input, _x->ratio));
+	(_x->mode==0) ? outlet_float(_x->out, shiftHalf4U(_x->input, _x->ratio)) : outlet_float(_x->out, shiftQuarter4U(_x->input, _x->ratio));
 }
 
 void onFloatMsg(t_psShift *_x, t_floatarg _in) {

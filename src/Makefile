@@ -1,6 +1,6 @@
 CC = clang
 
-cflags_for_obj	= -c -fPIC -arch x86_64 -I /Applications/Pd-0.51-1.app/Contents/Resources/src
+cflags_for_obj	= -c -fPIC -arch x86_64 -D PDFLAG=1 -I /Applications/Pd-0.51-1.app/Contents/Resources/src
 cflags_for_bin	= -dynamic -bundle -undefined dynamic_lookup -arch x86_64
 
 cmd_for_bin = $(CC) $^ $(cflags_for_bin) -o $@
@@ -54,25 +54,25 @@ all:	clear \
 # sign.o:
 # 	@$(cmd_for_obj) sign.c
 
-psEaseExp.pd_darwin: psEaseExp.o operator.o arithmetic.o
+psEaseExp.pd_darwin: psEaseExp.o
 	@$(cmd_for_bin)
 
 psEaseExp.o:
 	@$(cmd_for_obj) psEaseExp.c
 
-psShift.pd_darwin: psShift.o operator.o arithmetic.o
+psShift.pd_darwin: psShift.o
 	@$(cmd_for_bin)
 
 psShift.o:
 	@$(cmd_for_obj) psShift.c
 
-psComp.pd_darwin: psComp.o operator.o arithmetic.o
+psComp.pd_darwin: psComp.o
 	@$(cmd_for_bin)
 
 psComp.o:
 	@$(cmd_for_obj) psComp.c
 
-psFlip.pd_darwin: psFlip.o operator.o arithmetic.o
+psFlip.pd_darwin: psFlip.o
 	@$(cmd_for_bin)
 
 psFlip.o:
@@ -146,11 +146,11 @@ psFlip.o:
 
 ## build common library
 
-operator.o:
-	@$(cmd_for_obj) ./common/operator.c
+# operator.o:
+# 	@$(cmd_for_obj) ./common/operator.c
 
-arithmetic.o:
-	@$(cmd_for_obj) ./common/arithmetic.c
+# arithmetic.o:
+# 	@$(cmd_for_obj) ./common/arithmetic.c
 
 ## preparation and cleanup
 

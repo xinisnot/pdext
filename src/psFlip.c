@@ -18,7 +18,7 @@ typedef struct _psFlip {
 /***** method ********************************************************************/
 
 void onBangMsg(t_psFlip *_x) {
-	(_x->flip==0) ? outlet_float(_x->out, _x->input) : outlet_float(_x->out, (t_float)flip4U(_x->input));
+	(_x->flip==0) ? outlet_float(_x->out, _x->input) : outlet_float(_x->out, flip4U(_x->input));
 }
 
 void onFloatMsg(t_psFlip *_x, t_floatarg _in) {

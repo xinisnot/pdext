@@ -18,7 +18,7 @@ double div(double _v1, double _v2) {
 	return (_v2!=0) ? _v1/_v2 : FMAX;
 }
 
-double mod(double _v1, double _v2) {
+double modulo(double _v1, double _v2) {
 	return (_v2!=0) ? fmod(_v1, _v2) : 0;
 }
 

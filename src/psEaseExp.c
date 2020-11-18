@@ -22,13 +22,13 @@ void onBangMsg(t_psEaseExp *_x) {
 	switch(_x->mode)
 	{
 		default:
-		case 0: outlet_float(_x->out, (t_float)easeInExponent4U(_x->input, _x->curve));
+		case 0: outlet_float(_x->out, easeInExponent4U(_x->input, _x->curve));
 				break;
-		case 1: outlet_float(_x->out, (t_float)easeOutExponent4U(_x->input, _x->curve));
+		case 1: outlet_float(_x->out, easeOutExponent4U(_x->input, _x->curve));
 				break;
-		case 2: outlet_float(_x->out, (t_float)easeInOutExponent4U(_x->input, _x->curve));
+		case 2: outlet_float(_x->out, easeInOutExponent4U(_x->input, _x->curve));
 				break;
-		case 3: outlet_float(_x->out, (t_float)easeOutInExponent4U(_x->input, _x->curve));
+		case 3: outlet_float(_x->out, easeOutInExponent4U(_x->input, _x->curve));
 				break;
 	}
 }

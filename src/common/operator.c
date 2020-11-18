@@ -1,48 +1,149 @@
 #include "operator.h"
 
+
+// basic
+
+inline FTYPE add(FTYPE _v1, FTYPE _v2) {
+	return _v1 + _v2;
+}
+
+inline FTYPE sub(FTYPE _v1, FTYPE _v2) {
+	return _v1 - _v2;
+}
+
+inline FTYPE mul(FTYPE _v1, FTYPE _v2) {
+	return _v1 * _v2;
+}
+
+inline FTYPE div(FTYPE _v1, FTYPE _v2) {
+	return (_v2!=0) ? _v1/_v2 : FMAX;
+}
+
+inline FTYPE modulo(FTYPE _v1, FTYPE _v2) {
+	return (_v2!=0) ? fmod(_v1, _v2) : 0;
+}
+
+inline int sign(FTYPE _in) {
+	return (_in==0) ? 0 : ((_in>0) ? 1 : -1);
+}
+
+inline FTYPE reciprocal(FTYPE _in) {
+	return div(1, _in);
+}
+
+// average
+
+inline FTYPE meanA(FTYPE *_x, int _len) {
+	FTYPE value = *_x;
+	for(int i=1; i<_len; i++)	value += *(_x+i);
+	return value / _len;
+}
+
+inline FTYPE meanG(FTYPE *_x, int _len) {
+	FTYPE value = *_x;
+	for(int i=1; i<_len; i++)	value *= *(_x+i);
+	return pow(value, 1/_len);
+}
+
+inline FTYPE meanH(FTYPE *_x, int _len) {
+	FTYPE value = reciprocal(*_x);
+	for(int i=1; i<_len; i++)	value += reciprocal(*(_x+1));
+	return reciprocal(value/_len);
+}
+
+// trigonometric
+
+inline FTYPE sine(FTYPE _x) {
+	return (_x==0.5||_x==1) ? 0 :  sin(_x*TWOPI);
+}
+
+inline FTYPE cosine(FTYPE _x) {
+	return (_x==0.25||_x==0.75) ? 0 : cos(_x*TWOPI);
+}
+
+inline FTYPE tangent(FTYPE _x) {
+	return (_x==0.25||_x==0.75) ? FMAX : ((_x==0.5||_x==1) ? 0 : tan(_x*TWOPI));
+}
+
+inline FTYPE cosecant(FTYPE _x) {
+	return reciprocal(sine(_x));
+}
+
+inline FTYPE secant(FTYPE _x) {
+	return reciprocal(cosine(_x));
+}
+
+inline FTYPE cotangent(FTYPE _x) {
+	return reciprocal(tangent(_x));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Convert bipolar [-1,1] to unipolar [0,1], or vice versa.
-double convertB2U(double _in) {
+inline FTYPE convertB2U(FTYPE _in) {
 	return (_in+1)*0.5;
 }
 
-double convertU2B(double _in) {
+inline FTYPE convertU2B(FTYPE _in) {
 	return _in*2-1;
 }
 
 // Scale input [_min,_max] to unipolar [0,1], or vice versa.
-double scaleX2U(double _in, double _min, double _max) {
+inline FTYPE scaleX2U(FTYPE _in, FTYPE _min, FTYPE _max) {
 	return div(_in-_min, _max-_min);
 }
 
-double scaleU2X(double _in, double _min, double _max) {
+inline FTYPE scaleU2X(FTYPE _in, FTYPE _min, FTYPE _max) {
 	return _in*(_max-_min)+_min;
 }
 
 // Flip to a symmetric value. 
-double flip4U(double _in) {
+inline FTYPE flip4U(FTYPE _in) {
 	return _in*-1 + 1;
 }
 
-double flip4B(double _in) {
+inline FTYPE flip4B(FTYPE _in) {
 	return _in*-1;
 }
 
 // Clip input to [_min,_max].
-double clipCC(double _in, double _min, double _max) {
+inline FTYPE clipCC(FTYPE _in, FTYPE _min, FTYPE _max) {
 	return (_min<=_in&&_in<=_max) ? _in : ((_in<_min) ? _min : _max);
 }
 
-double clipOO(double _in, double _min, double _max) {
-	double output = 0;
+FTYPE clipOO(FTYPE _in, FTYPE _min, FTYPE _max) {
+	FTYPE output = 0;
 
-	if(PD_FLOATSIZE==32)		output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafterf(_min, _max) : nextafterf(_max, _min));
-	else if(PD_FLOATSIZE==64)	output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafter(_min, _max) : nextafter(_max, _min));
+	if(PDFLAG==1&&PD_FLOATSIZE==32)	output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafterf(_min, _max) : nextafterf(_max, _min));
+	else							output = (_min<_in&&_in<_max) ? _in : ((_in<=_min) ? nextafter(_min, _max) : nextafter(_max, _min));
 
 	return output;
 }
 
-double clipOC(double _in, double _min, double _max) {
-	double output = 0;
+FTYPE clipOC(FTYPE _in, FTYPE _min, FTYPE _max) {
+	FTYPE output = 0;
 
 	if(PD_FLOATSIZE==32)		output = (_min<_in&&_in<=_max) ? _in : ((_in<=_min) ? nextafterf(_min, _max) : _max);
 	else if(PD_FLOATSIZE==64)	output = (_min<_in&&_in<=_max) ? _in : ((_in<=_min) ? nextafter(_min, _max) : _max);
@@ -50,8 +151,8 @@ double clipOC(double _in, double _min, double _max) {
 	return output;
 }
 
-double clipCO(double _in, double _min, double _max) {
-	double output = 0;
+FTYPE clipCO(FTYPE _in, FTYPE _min, FTYPE _max) {
+	FTYPE output = 0;
 
 	if(PD_FLOATSIZE==32)		output = (_min<=_in&&_in<_max) ? _in : ((_in<_min) ? _min : nextafterf(_max, _min));
 	else if(PD_FLOATSIZE==64)	output = (_min<=_in&&_in<_max) ? _in : ((_in<_min) ? _min: nextafter(_max, _min));
@@ -59,17 +160,24 @@ double clipCO(double _in, double _min, double _max) {
 	return output;
 }
 
-// easing function
-double easeInExponent4U(double _in, double _curve) {
+
+
+
+
+
+
+/***** Shaping or easing functions for phasor ************************************/
+
+inline FTYPE easeInExponent4U(FTYPE _in, FTYPE _curve) {
 	return (0<_curve && _curve<1) ? pow(_in, reciprocal(1-_curve)) : ((_curve<=0) ? _in : (_in==1));
 }
 
-double easeOutExponent4U(double _in, double _curve) {
+inline FTYPE easeOutExponent4U(FTYPE _in, FTYPE _curve) {
 	return (0<_curve && _curve<1) ? pow(_in, 1-_curve) : ((_curve<=0) ? _in : (_in!=0));
 }
 
-double easeInOutExponent4U(double _in, double _curve) {
-	double output = _in;
+FTYPE easeInOutExponent4U(FTYPE _in, FTYPE _curve) {
+	FTYPE output = _in;
 
 	if(0<_curve&&_curve<1)
 	{
@@ -84,8 +192,8 @@ double easeInOutExponent4U(double _in, double _curve) {
 	return output;
 }
 
-double easeOutInExponent4U(double _in, double _curve) {
-	double output = _in;
+FTYPE easeOutInExponent4U(FTYPE _in, FTYPE _curve) {
+	FTYPE output = _in;
 
 	if(0<_curve&&_curve<1)
 	{
@@ -100,8 +208,8 @@ double easeOutInExponent4U(double _in, double _curve) {
 	return output;
 }
 
-double shiftHalf4U(double _in, double _ratio) {
-	double output = _in;
+FTYPE shiftHalf4U(FTYPE _in, FTYPE _ratio) {
+	FTYPE output = _in;
 
 	if(0<_ratio&&_ratio<1)	output = (_in<_ratio) ? scaleU2X(scaleX2U(_in, 0, _ratio), 0, 0.5) : scaleU2X(scaleX2U(_in, _ratio, 1), 0.5, 1);
 	else if(_ratio<=0)		output = (_in==0) ? 0 : scaleU2X(_in, 0.5, 1);
@@ -110,8 +218,8 @@ double shiftHalf4U(double _in, double _ratio) {
 	return output;
 }
 
-double shiftQuarter4U(double _in, double _ratio) {
-	double output = _in;
+FTYPE shiftQuarter4U(FTYPE _in, FTYPE _ratio) {
+	FTYPE output = _in;
 
 	if(0<_ratio&&_ratio<1)
 	{
@@ -133,8 +241,8 @@ double shiftQuarter4U(double _in, double _ratio) {
 	return output;	
 }
 
-double compHalf4U(double _in, double _amount) {
-	double output = 0;
+FTYPE compHalf4U(FTYPE _in, FTYPE _amount) {
+	FTYPE output = 0;
 
 	if(0<_amount&&_amount<1)
 	{
@@ -149,8 +257,8 @@ double compHalf4U(double _in, double _amount) {
 	return output;
 }
 
-double compQuarter4U(double _in, double _amount) {
-	double output = 0;
+FTYPE compQuarter4U(FTYPE _in, FTYPE _amount) {
+	FTYPE output = 0;
 
 	if(0<_amount&&_amount<1)
 	{
@@ -176,3 +284,15 @@ double compQuarter4U(double _in, double _amount) {
 	return output;
 }
 
+
+
+
+
+// FTYPE repeat4Phasor(FTYPE _in, FTYPE _num) {
+// 	return modulo(_in*2);
+// }
+
+// FTYPE convertPhasor2Triangle(FTYPE _in, FTYPE _num) {
+// 	FTYPE output = _in*2;
+// 	return (output<=1) ? output : flip4U(output-1);
+// }

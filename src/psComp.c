@@ -19,7 +19,7 @@ typedef struct _psComp {
 /***** method ********************************************************************/
 
 void onBangMsg(t_psComp *_x) {
-	(_x->mode==0) ? outlet_float(_x->out, (t_float)compHalf4U(_x->input, _x->amount)) : outlet_float(_x->out, (t_float)compQuarter4U(_x->input, _x->amount));
+	(_x->mode==0) ? outlet_float(_x->out, compHalf4U(_x->input, _x->amount)) : outlet_float(_x->out, compQuarter4U(_x->input, _x->amount));
 }
 
 void onFloatMsg(t_psComp *_x, t_floatarg _in) {

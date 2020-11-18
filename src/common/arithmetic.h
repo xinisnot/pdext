@@ -31,7 +31,7 @@ double add(double _v1, double _v2);
 double sub(double _v1, double _v2);
 double mul(double _v1, double _v2);
 double div(double _v1, double _v2);
-double mod(double _v1, double _v2);
+double modulo(double _v1, double _v2);
 double meanA(double *_x, int _len);
 double meanG(double *_x, int _len);
 double meanH(double *_x, int _len);
