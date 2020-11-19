@@ -81,16 +81,19 @@ FTYPE clipOO(FTYPE _in, FTYPE _min, FTYPE _max);
 FTYPE clipOC(FTYPE _in, FTYPE _min, FTYPE _max);
 FTYPE clipCO(FTYPE _in, FTYPE _min, FTYPE _max);
 
-FTYPE easeInExponent4Phasor(FTYPE _in, FTYPE _curve);
-FTYPE easeOutExponent4Phasor(FTYPE _in, FTYPE _curve);
-FTYPE easeInOutExponent4Phasor(FTYPE _in, FTYPE _curve);
-FTYPE easeOutInExponent4Phasor(FTYPE _in, FTYPE _curve);
-FTYPE shiftHalf4Phasor(FTYPE _in, FTYPE _ratio);
-FTYPE shiftQuarter4Phasor(FTYPE _in, FTYPE _ratio);
-FTYPE compHalf4Phasor(FTYPE _in, FTYPE _amount);
-FTYPE compQuarter4Phasor(FTYPE _in, FTYPE _amount);
+FTYPE easeInExponent4U(FTYPE _in, FTYPE _curve);
+FTYPE easeOutExponent4U(FTYPE _in, FTYPE _curve);
+FTYPE easeInOutExponent4U(FTYPE _in, FTYPE _curve);
+FTYPE easeOutInExponent4U(FTYPE _in, FTYPE _curve);
+FTYPE easeInInExponent4U(FTYPE _in, FTYPE _curve);
+FTYPE easeOutOutExponent4U(FTYPE _in, FTYPE _curve);
+
+FTYPE shiftHalf4U(FTYPE _in, FTYPE _ratio);
+FTYPE shiftQuarter4U(FTYPE _in, FTYPE _ratio);
+FTYPE compHalf4U(FTYPE _in, FTYPE _amount);
+FTYPE compQuarter4U(FTYPE _in, FTYPE _amount);
 FTYPE phaseTriangle(FTYPE _in);
-FTYPE reduceQuantum4Phasor(FTYPE _in, int _quantum);
+FTYPE reduceQuantum4U(FTYPE _in, int _quantum);
 
 /***** function - arithmetic *****************************************************/
 
@@ -214,15 +217,15 @@ inline FTYPE clipCO(FTYPE _in, FTYPE _min, FTYPE _max) {
 
 /***** function - shaping or easing functions for phasor *************************/
 
-inline FTYPE easeInExponent4Phasor(FTYPE _in, FTYPE _curve) {
+inline FTYPE easeInExponent4U(FTYPE _in, FTYPE _curve) {
     return (0<_curve && _curve<1) ? POW(_in, reciprocal(1-_curve)) : ((_curve<=0) ? _in : (_in==1));
 }
 
-inline FTYPE easeOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
+inline FTYPE easeOutExponent4U(FTYPE _in, FTYPE _curve) {
     return (0<_curve && _curve<1) ? POW(_in, 1-_curve) : ((_curve<=0) ? _in : (_in!=0));
 }
 
-inline FTYPE easeInOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
+inline FTYPE easeInOutExponent4U(FTYPE _in, FTYPE _curve) {
     FTYPE output = _in;
 
     if(0<_curve&&_curve<1)
@@ -238,7 +241,7 @@ inline FTYPE easeInOutExponent4Phasor(FTYPE _in, FTYPE _curve) {
     return output;
 }
 
-inline FTYPE easeOutInExponent4Phasor(FTYPE _in, FTYPE _curve) {
+inline FTYPE easeOutInExponent4U(FTYPE _in, FTYPE _curve) {
     FTYPE output = _in;
 
     if(0<_curve&&_curve<1)
@@ -254,7 +257,39 @@ inline FTYPE easeOutInExponent4Phasor(FTYPE _in, FTYPE _curve) {
     return output;
 }
 
-inline FTYPE shiftHalf4Phasor(FTYPE _in, FTYPE _ratio) {
+inline FTYPE easeInInExponent4U(FTYPE _in, FTYPE _curve) {
+    FTYPE output = _in;
+
+    if(0<_curve&&_curve<1)
+    {
+        if(0<=_in && _in<=0.5)      output = scaleU2X(POW(scaleX2U(_in, 0, 0.5), reciprocal(1-_curve)), 0, 0.5);
+        else if(0.5<=_in && _in<=1) output = scaleU2X(POW(scaleX2U(_in, 0.5, 1), reciprocal(1-_curve)), 0.5, 1);
+    }
+    else
+    {
+        output = (_curve<=0) ? _in : 0.5 + ((_in<0.5)*-0.5) + ((0.5<_in)*0.5);
+    }
+
+    return output;
+}
+
+inline FTYPE easeOutOutExponent4U(FTYPE _in, FTYPE _curve) {
+    FTYPE output = _in;
+
+    if(0<_curve&&_curve<1)
+    {
+        if(0<=_in && _in<0.5)       output = scaleU2X(POW(scaleX2U(_in, 0, 0.5), 1-_curve), 0, 0.5);
+        else if(0.5<_in && _in<=1)  output = scaleU2X(POW(scaleX2U(_in, 0.5, 1), 1-_curve), 0.5, 1);
+    }
+    else
+    {
+        output = (_curve<=0) ? _in :  0.5 + ((_in==0)*-0.5) + ((_in==1)*0.5);
+    }
+
+    return output;
+}
+
+inline FTYPE shiftHalf4U(FTYPE _in, FTYPE _ratio) {
     FTYPE output = _in;
 
     if(0<_ratio&&_ratio<1)  output = (_in<_ratio) ? scaleU2X(scaleX2U(_in, 0, _ratio), 0, 0.5) : scaleU2X(scaleX2U(_in, _ratio, 1), 0.5, 1);
@@ -264,7 +299,7 @@ inline FTYPE shiftHalf4Phasor(FTYPE _in, FTYPE _ratio) {
     return output;
 }
 
-inline FTYPE shiftQuarter4Phasor(FTYPE _in, FTYPE _ratio) {
+inline FTYPE shiftQuarter4U(FTYPE _in, FTYPE _ratio) {
     FTYPE output = _in;
 
     if(0<_ratio&&_ratio<1)
@@ -287,7 +322,7 @@ inline FTYPE shiftQuarter4Phasor(FTYPE _in, FTYPE _ratio) {
     return output;	
 }
 
-inline FTYPE compHalf4Phasor(FTYPE _in, FTYPE _amount) {
+inline FTYPE compHalf4U(FTYPE _in, FTYPE _amount) {
     FTYPE output = 0;
 
     if(0<_amount&&_amount<1)
@@ -303,7 +338,7 @@ inline FTYPE compHalf4Phasor(FTYPE _in, FTYPE _amount) {
     return output;
 }
 
-inline FTYPE compQuarter4Phasor(FTYPE _in, FTYPE _amount) {
+inline FTYPE compQuarter4U(FTYPE _in, FTYPE _amount) {
     FTYPE output = 0;
 
     if(0<_amount&&_amount<1)
@@ -333,7 +368,7 @@ inline FTYPE phaseTriangle(FTYPE _in) {
     return (_in*2<=1) ? _in*2 : flip4U(_in*2-1);
 }
 
-inline FTYPE reduceQuantum4Phasor(FTYPE _in, int _quantum) {
+inline FTYPE reduceQuantum4U(FTYPE _in, int _quantum) {
     return roundFloor(_in, reciprocal(_quantum)) * reciprocal(1-reciprocal(_quantum));
 }
 

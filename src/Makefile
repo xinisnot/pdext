@@ -5,31 +5,29 @@ CFLAGS4BIN = -dynamic -bundle -undefined dynamic_lookup -arch x86_64
 
 .PHONY: all
 all:	clear \
-		psEaseExp \
-		psShift \
-		psFlip \
-		psComp \
-		psStep \
-		pTriangle \
+		psEaseExp~ \
 		clean
 
-psEaseExp:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+# psEaseExp:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-psShift:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+psEaseExp~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-psFlip:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+# psShift:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-psComp:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+# psFlip:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-psStep:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+# psComp:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-pTriangle:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+# psStep:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+# pTriangle:
+# 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup
 
