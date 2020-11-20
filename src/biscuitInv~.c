@@ -5,9 +5,9 @@
 
 /***** class declaration *********************************************************/
 
-static t_class *biscuitIv_tilde_class;
+static t_class *biscuitInv_tilde_class;
 
-typedef struct _biscuitIv_tilde {
+typedef struct _biscuitInv_tilde {
     t_object    x_obj;
     t_inlet     *inlet2active;
     t_inlet     *inlet3digit8;
@@ -24,39 +24,39 @@ typedef struct _biscuitIv_tilde {
     int         active;
     int         digits[8];
 
-} t_biscuitIv_tilde;
+} t_biscuitInv_tilde;
 
 /***** internal method ***********************************************************/
 
-void setDigits(t_biscuitIv_tilde *_x, int _index, t_floatarg _v) {
+void setDigits(t_biscuitInv_tilde *_x, int _index, t_floatarg _v) {
     int value = (_v==0);
     
     _x->digits[_index] = value<<_index;
 }
 
-// int getDigits(t_biscuitIv_tilde *_x, int _index) {
+// int getDigits(t_biscuitInv_tilde *_x, int _index) {
 //     return _x->digits[_index];
 // }
 
-int getMask(t_biscuitIv_tilde *_x) {
+int getMask(t_biscuitInv_tilde *_x) {
     int value = 0;
     for(int i=0; i<8; i++)  value += _x->digits[i];
 
     return value;
 }
 
-void setActive(t_biscuitIv_tilde *_x, t_floatarg _v) {
+void setActive(t_biscuitInv_tilde *_x, t_floatarg _v) {
     _x->active = _v;
 }
 
-int getActive(t_biscuitIv_tilde *_x) {
+int getActive(t_biscuitInv_tilde *_x) {
    return  _x->active;
 }
 
 
 
 
-t_sample signalOut(t_biscuitIv_tilde *_x, t_sample _current) {
+t_sample signalOut(t_biscuitInv_tilde *_x, t_sample _current) {
     int input = (int)roundf(scaleU2X(convertB2U(_current), 0, 255));
 
     return (getActive(_x)==0) ? _current : (t_sample)convertU2B(scaleX2U(input^getMask(_x), 0, 255));
@@ -64,8 +64,8 @@ t_sample signalOut(t_biscuitIv_tilde *_x, t_sample _current) {
 
 /***** DSP ***********************************************************************/
 
-t_int* biscuitIv_tilde_perform(t_int *_w) {
-    t_biscuitIv_tilde *x = (t_biscuitIv_tilde*)(_w[1]);
+t_int* biscuitInv_tilde_perform(t_int *_w) {
+    t_biscuitInv_tilde *x = (t_biscuitInv_tilde*)(_w[1]);
     t_sample *in1        = (t_sample*)(_w[2]);
     t_sample *in2        = (t_sample*)(_w[3]);
     t_sample *in3        = (t_sample*)(_w[4]);
@@ -96,14 +96,14 @@ t_int* biscuitIv_tilde_perform(t_int *_w) {
     return (_w+14);
 }
 
-void biscuitIv_tilde_dsp(t_biscuitIv_tilde *_x, t_signal **_sp) {
-  dsp_add(biscuitIv_tilde_perform, 13, _x, _sp[0]->s_vec, _sp[1]->s_vec, _sp[2]->s_vec, _sp[3]->s_vec, _sp[4]->s_vec, _sp[5]->s_vec, _sp[6]->s_vec, _sp[7]->s_vec, _sp[8]->s_vec, _sp[9]->s_vec, _sp[10]->s_vec, _sp[0]->s_n);
+void biscuitInv_tilde_dsp(t_biscuitInv_tilde *_x, t_signal **_sp) {
+  dsp_add(biscuitInv_tilde_perform, 13, _x, _sp[0]->s_vec, _sp[1]->s_vec, _sp[2]->s_vec, _sp[3]->s_vec, _sp[4]->s_vec, _sp[5]->s_vec, _sp[6]->s_vec, _sp[7]->s_vec, _sp[8]->s_vec, _sp[9]->s_vec, _sp[10]->s_vec, _sp[0]->s_n);
 }
 
 /***** constructor & destructor **************************************************/
 
-void* biscuitIv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
-    t_biscuitIv_tilde *x = (t_biscuitIv_tilde*)pd_new(biscuitIv_tilde_class);
+void* biscuitInv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
+    t_biscuitInv_tilde *x = (t_biscuitInv_tilde*)pd_new(biscuitInv_tilde_class);
 
     x->inlet2active     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
     x->inlet3digit8     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
@@ -162,7 +162,7 @@ void* biscuitIv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
     return (void*)x;
 }
 
-void biscuitIv_tilde_free(t_biscuitIv_tilde *_x) {
+void biscuitInv_tilde_free(t_biscuitInv_tilde *_x) {
     inlet_free(_x->inlet2active);
     inlet_free(_x->inlet3digit8);
     inlet_free(_x->inlet4digit7);
@@ -177,10 +177,10 @@ void biscuitIv_tilde_free(t_biscuitIv_tilde *_x) {
 
 /***** class setup ***************************************************************/
 
-void biscuitIv_tilde_setup(void) {
-    biscuitIv_tilde_class = class_new(gensym("biscuitIv~"), (t_newmethod)biscuitIv_tilde_new, (t_method)biscuitIv_tilde_free, sizeof(t_biscuitIv_tilde), CLASS_DEFAULT, A_GIMME, 0);
+void biscuitInv_tilde_setup(void) {
+    biscuitInv_tilde_class = class_new(gensym("biscuitInv~"), (t_newmethod)biscuitInv_tilde_new, (t_method)biscuitInv_tilde_free, sizeof(t_biscuitInv_tilde), CLASS_DEFAULT, A_GIMME, 0);
 
-    class_addmethod(biscuitIv_tilde_class, (t_method)biscuitIv_tilde_dsp, gensym("dsp"), A_CANT, 0);
-    class_sethelpsymbol(biscuitIv_tilde_class, gensym("biscuitIv~"));
-    CLASS_MAINSIGNALIN(biscuitIv_tilde_class, t_biscuitIv_tilde, dummy);
+    class_addmethod(biscuitInv_tilde_class, (t_method)biscuitInv_tilde_dsp, gensym("dsp"), A_CANT, 0);
+    class_sethelpsymbol(biscuitInv_tilde_class, gensym("biscuitInv~"));
+    CLASS_MAINSIGNALIN(biscuitInv_tilde_class, t_biscuitInv_tilde, dummy);
 }
