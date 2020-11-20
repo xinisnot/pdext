@@ -9,16 +9,8 @@ static t_class *biscuitMute_tilde_class;
 
 typedef struct _biscuitMute_tilde {
     t_object    x_obj;
-    t_inlet     *inlet2active;
-    t_inlet     *inlet3digit8;
-    t_inlet     *inlet4digit7;
-    t_inlet     *inlet5digit6;
-    t_inlet     *inlet6digit5;
-    t_inlet     *inlet7digit4;
-    t_inlet     *inlet8digit3;
-    t_inlet     *inlet9digit2;
-    t_inlet     *inlet10digit1;
-    t_outlet    *outlet1;
+    t_inlet     *secondInlets[9];
+    t_outlet    *outlet;
     t_float     dummy;
 
     int         active;
@@ -28,67 +20,40 @@ typedef struct _biscuitMute_tilde {
 
 /***** internal method ***********************************************************/
 
-void setDigits(t_biscuitMute_tilde *_x, int _index, t_floatarg _v) {
-    int value = (_v==0);
-    
-    _x->digits[_index] = value<<_index;
-}
-
-// int getDigits(t_biscuitMute_tilde *_x, int _index) {
-//     return _x->digits[_index];
-// }
-
-int getMask(t_biscuitMute_tilde *_x) {
-    int value = 0;
-    for(int i=0; i<8; i++)  value += _x->digits[i];
-
-    return value;
-}
-
-void setActive(t_biscuitMute_tilde *_x, t_floatarg _v) {
-    _x->active = _v;
-}
-
-int getActive(t_biscuitMute_tilde *_x) {
-   return  _x->active;
-}
-
-
-
-
 t_sample signalOut(t_biscuitMute_tilde *_x, t_sample _current) {
     int input = (int)roundf(scaleU2X(convertB2U(_current), 0, 255));
+    int mask  = _x->digits[0] + (_x->digits[1]<<1) +(_x->digits[2]<<2) + (_x->digits[3]<<3) + (_x->digits[4]<<4) + (_x->digits[5]<<5) + (_x->digits[6]<<6) +(_x->digits[7]<<7);
 
-    return (getActive(_x)==0) ? _current : (t_sample)convertU2B(scaleX2U(input&getMask(_x), 0, 255));
+    return (_x->active==0) ? _current : (t_sample)convertU2B(scaleX2U(input&mask, 0, 255));
 }
 
 /***** DSP ***********************************************************************/
 
 t_int* biscuitMute_tilde_perform(t_int *_w) {
     t_biscuitMute_tilde *x = (t_biscuitMute_tilde*)(_w[1]);
-    t_sample *in1        = (t_sample*)(_w[2]);
-    t_sample *in2        = (t_sample*)(_w[3]);
-    t_sample *in3        = (t_sample*)(_w[4]);
-    t_sample *in4        = (t_sample*)(_w[5]);
-    t_sample *in5        = (t_sample*)(_w[6]);
-    t_sample *in6        = (t_sample*)(_w[7]);
-    t_sample *in7        = (t_sample*)(_w[8]);
-    t_sample *in8        = (t_sample*)(_w[9]);
-    t_sample *in9        = (t_sample*)(_w[10]);
-    t_sample *in10       = (t_sample*)(_w[11]);
-    t_sample *out1       = (t_sample*)(_w[12]);
-    int vecsize          = (int)(_w[13]);
+    t_sample *in1         = (t_sample*)(_w[2]);
+    t_sample *in2         = (t_sample*)(_w[3]);
+    t_sample *in3         = (t_sample*)(_w[4]);
+    t_sample *in4         = (t_sample*)(_w[5]);
+    t_sample *in5         = (t_sample*)(_w[6]);
+    t_sample *in6         = (t_sample*)(_w[7]);
+    t_sample *in7         = (t_sample*)(_w[8]);
+    t_sample *in8         = (t_sample*)(_w[9]);
+    t_sample *in9         = (t_sample*)(_w[10]);
+    t_sample *in10        = (t_sample*)(_w[11]);
+    t_sample *out1        = (t_sample*)(_w[12]);
+    int vecsize           = (int)(_w[13]);
 
     while(vecsize--) {
-        setActive(x, *in2++);
-        setDigits(x, 7, *in3++);
-        setDigits(x, 6, *in4++);
-        setDigits(x, 5, *in5++);
-        setDigits(x, 4, *in6++);
-        setDigits(x, 3, *in7++);
-        setDigits(x, 2, *in8++);
-        setDigits(x, 1, *in9++);
-        setDigits(x, 0, *in10++);
+        x->active = *in2++;
+        x->digits[7] = ((*in3++)==0);
+        x->digits[6] = ((*in4++)==0);
+        x->digits[5] = ((*in5++)==0);
+        x->digits[4] = ((*in6++)==0);
+        x->digits[3] = ((*in7++)==0);
+        x->digits[2] = ((*in8++)==0);
+        x->digits[1] = ((*in9++)==0);
+        x->digits[0] = ((*in10++)==0);
         
         *out1++ = signalOut(x, *in1++);
     }
@@ -105,57 +70,57 @@ void biscuitMute_tilde_dsp(t_biscuitMute_tilde *_x, t_signal **_sp) {
 void* biscuitMute_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
     t_biscuitMute_tilde *x = (t_biscuitMute_tilde*)pd_new(biscuitMute_tilde_class);
 
-    x->inlet2active     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet3digit8     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet4digit7     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet5digit6     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet6digit5     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet7digit4     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet8digit3     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet9digit2     = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet10digit1    = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->outlet1          = outlet_new(&x->x_obj, &s_signal);
+    x->secondInlets[0] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[1] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[2] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[3] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[4] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[5] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[6] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[7] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[8] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->outlet          = outlet_new(&x->x_obj, &s_signal);
 
-    switch(_argc)
-    {
+    switch(_argc) {
         default:
-        case 9: setDigits(x, 0, atom_getfloat(_argv+8));
-                pd_float((t_pd*)x->inlet10digit1, atom_getfloat(_argv+8));
-        case 8: setDigits(x, 1, atom_getfloat(_argv+7));
-                pd_float((t_pd*)x->inlet9digit2, atom_getfloat(_argv+7));
-        case 7: setDigits(x, 2, atom_getfloat(_argv+6));
-                pd_float((t_pd*)x->inlet8digit3, atom_getfloat(_argv+6));
-        case 6: setDigits(x, 3, atom_getfloat(_argv+5));
-                pd_float((t_pd*)x->inlet7digit4, atom_getfloat(_argv+5));
-        case 5: setDigits(x, 4, atom_getfloat(_argv+4));
-                pd_float((t_pd*)x->inlet6digit5, atom_getfloat(_argv+4));
-        case 4: setDigits(x, 5, atom_getfloat(_argv+3));
-                pd_float((t_pd*)x->inlet5digit6, atom_getfloat(_argv+3));
-        case 3: setDigits(x, 6, atom_getfloat(_argv+2));
-                pd_float((t_pd*)x->inlet4digit7, atom_getfloat(_argv+2));
-        case 2: setDigits(x, 7, atom_getfloat(_argv+1));
-                pd_float((t_pd*)x->inlet3digit8, atom_getfloat(_argv+1));
-        case 1: setActive(x, atom_getfloat(_argv));
-                pd_float((t_pd*)x->inlet2active, atom_getfloat(_argv));
+        case 9: 
+                x->digits[0] = (atom_getfloat(_argv+8)==0);
+                pd_float((t_pd*)x->secondInlets[8], atom_getfloat(_argv+8));
+        case 8: x->digits[1] = (atom_getfloat(_argv+7)==0);
+                pd_float((t_pd*)x->secondInlets[7], atom_getfloat(_argv+7));
+        case 7: x->digits[2] = (atom_getfloat(_argv+6)==0);
+                pd_float((t_pd*)x->secondInlets[6], atom_getfloat(_argv+6));
+        case 6: x->digits[3] = (atom_getfloat(_argv+5)==0);
+                pd_float((t_pd*)x->secondInlets[5], atom_getfloat(_argv+5));
+        case 5: x->digits[4] = (atom_getfloat(_argv+4)==0);
+                pd_float((t_pd*)x->secondInlets[4], atom_getfloat(_argv+4));
+        case 4: x->digits[5] = (atom_getfloat(_argv+3)==0);
+                pd_float((t_pd*)x->secondInlets[3], atom_getfloat(_argv+3));
+        case 3: x->digits[6] = (atom_getfloat(_argv+2)==0);
+                pd_float((t_pd*)x->secondInlets[2], atom_getfloat(_argv+2));
+        case 2: x->digits[7] = (atom_getfloat(_argv+1)==0);
+                pd_float((t_pd*)x->secondInlets[1], atom_getfloat(_argv+1));
+        case 1: x->active = atom_getfloat(_argv);
+                pd_float((t_pd*)x->secondInlets[0], atom_getfloat(_argv));
                 break;
-        case 0: setDigits(x, 0, 0);
-                setDigits(x, 1, 0);
-                setDigits(x, 2, 0);
-                setDigits(x, 3, 0);
-                setDigits(x, 4, 0);
-                setDigits(x, 5, 0);
-                setDigits(x, 6, 0);
-                setDigits(x, 7, 0);
-                setActive(x, 0);
-                pd_float((t_pd*)x->inlet10digit1, 0);
-                pd_float((t_pd*)x->inlet9digit2, 0);
-                pd_float((t_pd*)x->inlet8digit3, 0);
-                pd_float((t_pd*)x->inlet7digit4, 0);
-                pd_float((t_pd*)x->inlet6digit5, 0);
-                pd_float((t_pd*)x->inlet5digit6, 0);
-                pd_float((t_pd*)x->inlet4digit7, 0);
-                pd_float((t_pd*)x->inlet3digit8, 0);
-                pd_float((t_pd*)x->inlet2active, 0);
+        case 0: x->active = atom_getfloat(_argv);
+                x->digits[7] = (atom_getfloat(_argv+1)==0);
+                x->digits[6] = (atom_getfloat(_argv+2)==0);
+                x->digits[5] = (atom_getfloat(_argv+3)==0);
+                x->digits[4] = (atom_getfloat(_argv+4)==0);
+                x->digits[3] = (atom_getfloat(_argv+5)==0);
+                x->digits[2] = (atom_getfloat(_argv+6)==0);
+                x->digits[1] = (atom_getfloat(_argv+7)==0);
+                x->digits[0] = (atom_getfloat(_argv+8)==0);
+                pd_float((t_pd*)x->secondInlets[0], 0);
+                pd_float((t_pd*)x->secondInlets[1], 0);
+                pd_float((t_pd*)x->secondInlets[2], 0);
+                pd_float((t_pd*)x->secondInlets[3], 0);
+                pd_float((t_pd*)x->secondInlets[4], 0);
+                pd_float((t_pd*)x->secondInlets[5], 0);
+                pd_float((t_pd*)x->secondInlets[6], 0);
+                pd_float((t_pd*)x->secondInlets[7], 0);
+                pd_float((t_pd*)x->secondInlets[8], 0);
                 break;
     }
 
@@ -163,16 +128,16 @@ void* biscuitMute_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
 }
 
 void biscuitMute_tilde_free(t_biscuitMute_tilde *_x) {
-    inlet_free(_x->inlet2active);
-    inlet_free(_x->inlet3digit8);
-    inlet_free(_x->inlet4digit7);
-    inlet_free(_x->inlet5digit6);
-    inlet_free(_x->inlet6digit5);
-    inlet_free(_x->inlet7digit4);
-    inlet_free(_x->inlet8digit3);
-    inlet_free(_x->inlet9digit2);
-    inlet_free(_x->inlet10digit1);
-    outlet_free(_x->outlet1);
+    inlet_free(_x->secondInlets[0]);
+    inlet_free(_x->secondInlets[1]);
+    inlet_free(_x->secondInlets[2]);
+    inlet_free(_x->secondInlets[3]);
+    inlet_free(_x->secondInlets[4]);
+    inlet_free(_x->secondInlets[5]);
+    inlet_free(_x->secondInlets[6]);
+    inlet_free(_x->secondInlets[7]);
+    inlet_free(_x->secondInlets[8]);
+    outlet_free(_x->outlet);
 }
 
 /***** class setup ***************************************************************/
