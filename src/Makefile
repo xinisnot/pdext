@@ -5,10 +5,14 @@ CFLAGS4BIN = -dynamic -bundle -undefined dynamic_lookup -arch x86_64
 
 .PHONY: all
 all:	clear \
-		psEaseExp~ \
+		easeExp~ \
+		biscuitMute~ \
 		clean
 
-psEaseExp~:
+easeExp~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+biscuitMute~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup

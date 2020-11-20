@@ -9,7 +9,7 @@
 #include <float.h>
 
 #if (PDFLAG==1) || (PDFLAG==2)
-#   include <m_pd.h>
+// #   include <m_pd.h>
 #   define FMAX         FLT_MAX
 #   define FMIN         FlT_MIN
 #   define SIN          sinf

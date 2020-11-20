@@ -5,9 +5,9 @@
 
 /***** class declaration *********************************************************/
 
-static t_class *psEaseExp_tilde_class;
+static t_class *easeExp_tilde_class;
 
-typedef struct _psEaseExp_tilde {
+typedef struct _easeExp_tilde {
     t_object    x_obj;
     t_inlet     *inlet2curve;
     t_inlet     *inlet3width;
@@ -21,43 +21,43 @@ typedef struct _psEaseExp_tilde {
     int         easeMode;
     int         flip;
 
-} t_psEaseExp_tilde;
+} t_easeExp_tilde;
 
 /***** internal method ***********************************************************/
 
-void setCurve(t_psEaseExp_tilde *_x, t_floatarg _curve) {
+void setCurve(t_easeExp_tilde *_x, t_floatarg _curve) {
     _x->curve = _curve;
 }
 
-t_sample getCurve(t_psEaseExp_tilde *_x) {
+t_sample getCurve(t_easeExp_tilde *_x) {
     return _x->curve;
 }
 
-void setWidth(t_psEaseExp_tilde *_x, t_floatarg _width) {
+void setWidth(t_easeExp_tilde *_x, t_floatarg _width) {
     _x->width = _width;
 }
 
-t_sample getWidth(t_psEaseExp_tilde *_x) {
+t_sample getWidth(t_easeExp_tilde *_x) {
     return _x->width;
 }
 
-void setEaseMode(t_psEaseExp_tilde *_x, t_floatarg _mode) {
+void setEaseMode(t_easeExp_tilde *_x, t_floatarg _mode) {
     _x->easeMode = _mode;
 }
 
-int getEaseMode(t_psEaseExp_tilde *_x) {
+int getEaseMode(t_easeExp_tilde *_x) {
     return _x->easeMode;
 }
 
-void setFlip(t_psEaseExp_tilde *_x, t_floatarg _flip) {
+void setFlip(t_easeExp_tilde *_x, t_floatarg _flip) {
     _x->flip = _flip;
 }
 
-int getFlip(t_psEaseExp_tilde *_x) {
+int getFlip(t_easeExp_tilde *_x) {
     return _x->flip;
 }
 
-t_sample signalOut(t_psEaseExp_tilde *_x, t_sample _current) {
+t_sample signalOut(t_easeExp_tilde *_x, t_sample _current) {
     t_sample value = (getFlip(_x)==0) ? _current : flip4U(_current);
 
     value = (getFlip(_x)==0) ? shiftHalf4U(value, getWidth(_x)) : shiftHalf4U(value, 1-getWidth(_x));
@@ -76,8 +76,8 @@ t_sample signalOut(t_psEaseExp_tilde *_x, t_sample _current) {
 
 /***** DSP ***********************************************************************/
 
-t_int* psEaseExp_tilde_perform(t_int *_w) {
-    t_psEaseExp_tilde *x = (t_psEaseExp_tilde*)(_w[1]);
+t_int* easeExp_tilde_perform(t_int *_w) {
+    t_easeExp_tilde *x = (t_easeExp_tilde*)(_w[1]);
     t_sample *in1        = (t_sample*)(_w[2]);
     t_sample *in2        = (t_sample*)(_w[3]);
     t_sample *in3        = (t_sample*)(_w[4]);
@@ -98,14 +98,14 @@ t_int* psEaseExp_tilde_perform(t_int *_w) {
     return (_w+9);
 }
 
-void psEaseExp_tilde_dsp(t_psEaseExp_tilde *_x, t_signal **_sp) {
-  dsp_add(psEaseExp_tilde_perform, 8, _x, _sp[0]->s_vec, _sp[1]->s_vec, _sp[2]->s_vec, _sp[3]->s_vec, _sp[4]->s_vec, _sp[5]->s_vec, _sp[0]->s_n);
+void easeExp_tilde_dsp(t_easeExp_tilde *_x, t_signal **_sp) {
+  dsp_add(easeExp_tilde_perform, 8, _x, _sp[0]->s_vec, _sp[1]->s_vec, _sp[2]->s_vec, _sp[3]->s_vec, _sp[4]->s_vec, _sp[5]->s_vec, _sp[0]->s_n);
 }
 
 /***** constructor & destructor **************************************************/
 
-void* psEaseExp_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
-    t_psEaseExp_tilde *x = (t_psEaseExp_tilde*)pd_new(psEaseExp_tilde_class);
+void* easeExp_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
+    t_easeExp_tilde *x = (t_easeExp_tilde*)pd_new(easeExp_tilde_class);
     x->inlet2curve       = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
     x->inlet3width       = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
     x->inlet4easeMode    = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
@@ -138,7 +138,7 @@ void* psEaseExp_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
     return (void*)x;
 }
 
-void psEaseExp_tilde_free(t_psEaseExp_tilde *_x) {
+void easeExp_tilde_free(t_easeExp_tilde *_x) {
     inlet_free(_x->inlet2curve);
     inlet_free(_x->inlet3width);
     inlet_free(_x->inlet4easeMode);
@@ -148,10 +148,10 @@ void psEaseExp_tilde_free(t_psEaseExp_tilde *_x) {
 
 /***** class setup ***************************************************************/
 
-void psEaseExp_tilde_setup(void) {
-    psEaseExp_tilde_class = class_new(gensym("psEaseExp~"), (t_newmethod)psEaseExp_tilde_new, (t_method)psEaseExp_tilde_free, sizeof(t_psEaseExp_tilde), CLASS_DEFAULT, A_GIMME, 0);
+void easeExp_tilde_setup(void) {
+    easeExp_tilde_class = class_new(gensym("easeExp~"), (t_newmethod)easeExp_tilde_new, (t_method)easeExp_tilde_free, sizeof(t_easeExp_tilde), CLASS_DEFAULT, A_GIMME, 0);
 
-    class_addmethod(psEaseExp_tilde_class, (t_method)psEaseExp_tilde_dsp, gensym("dsp"), A_CANT, 0);
-    class_sethelpsymbol(psEaseExp_tilde_class, gensym("psEaseExp~"));
-    CLASS_MAINSIGNALIN(psEaseExp_tilde_class, t_psEaseExp_tilde, dummy);
+    class_addmethod(easeExp_tilde_class, (t_method)easeExp_tilde_dsp, gensym("dsp"), A_CANT, 0);
+    class_sethelpsymbol(easeExp_tilde_class, gensym("easeExp~"));
+    CLASS_MAINSIGNALIN(easeExp_tilde_class, t_easeExp_tilde, dummy);
 }
