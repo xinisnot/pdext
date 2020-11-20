@@ -1,7 +1,6 @@
 // Copyright (c) 2020 xin.
 
-#include <m_pd.h>
-#include "common/operator.h"
+#include "common/DSPheart.h"
 
 /***** class declaration *********************************************************/
 
@@ -17,15 +16,6 @@ typedef struct _biscuitInv_tilde {
     int         digits[8];
 
 } t_biscuitInv_tilde;
-
-/***** internal method ***********************************************************/
-
-t_sample signalOut(t_biscuitInv_tilde *_x, t_sample _current) {
-    int input = (int)roundf(scaleU2X(convertB2U(_current), 0, 255));
-    int mask  = _x->digits[0] + (_x->digits[1]<<1) +(_x->digits[2]<<2) + (_x->digits[3]<<3) + (_x->digits[4]<<4) + (_x->digits[5]<<5) + (_x->digits[6]<<6) +(_x->digits[7]<<7);
-
-    return (_x->active==0) ? _current : (t_sample)convertU2B(scaleX2U(input^mask, 0, 255));
-}
 
 /***** DSP ***********************************************************************/
 
@@ -45,7 +35,7 @@ t_int* biscuitInv_tilde_perform(t_int *_w) {
     int vecsize           = (int)(_w[13]);
 
     while(vecsize--) {
-        x->active = *in2++;
+        x->active    = *in2++;
         x->digits[7] = ((*in3++)!=0);
         x->digits[6] = ((*in4++)!=0);
         x->digits[5] = ((*in5++)!=0);
@@ -54,8 +44,7 @@ t_int* biscuitInv_tilde_perform(t_int *_w) {
         x->digits[2] = ((*in8++)!=0);
         x->digits[1] = ((*in9++)!=0);
         x->digits[0] = ((*in10++)!=0);
-        
-        *out1++ = signalOut(x, *in1++);
+        *out1++      = (x->active==0) ? *in1++ : biscuitInv(*in1++, x->digits);
     }
 
     return (_w+14);
@@ -83,8 +72,7 @@ void* biscuitInv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
 
     switch(_argc) {
         default:
-        case 9: 
-                x->digits[0] = (atom_getfloat(_argv+8)!=0);
+        case 9: x->digits[0] = (atom_getfloat(_argv+8)!=0);
                 pd_float((t_pd*)x->secondInlets[8], atom_getfloat(_argv+8));
         case 8: x->digits[1] = (atom_getfloat(_argv+7)!=0);
                 pd_float((t_pd*)x->secondInlets[7], atom_getfloat(_argv+7));
