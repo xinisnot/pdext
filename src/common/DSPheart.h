@@ -11,6 +11,7 @@
 
 FTYPE biscuitInv(FTYPE _in, int* _digits);
 FTYPE biscuitMute(FTYPE _in, int* _digits);
+FTYPE easeExp(FTYPE _in, FTYPE _width, FTYPE _curve, int _flip, int _easeType);
 
 /***** function ******************************************************************/
 
@@ -28,6 +29,20 @@ inline FTYPE biscuitMute(FTYPE _in, int* _digits) {
     return (FTYPE)convertU2B(scaleX2U(input&mask, 0, 255));
 }
 
+inline FTYPE easeExp(FTYPE _in, FTYPE _width, FTYPE _curve, int _flip, int _easeType) {
+    FTYPE value = (_flip==0) ? shiftHalf4U(_in, _width) : shiftHalf4U(flip4U(_in), 1-_width);
+
+    switch(_easeType) {
+        default:
+        case 0: value = easeInExponent4U(value, _curve);      break;
+        case 1: value = easeOutExponent4U(value, _curve);     break;
+        case 2: value = easeInOutExponent4U(value, _curve);   break;
+        case 3: value = easeOutInExponent4U(value, _curve);   break;
+        case 4: value = easeInInExponent4U(value, _curve);    break;
+        case 5: value = easeOutOutExponent4U(value, _curve);  break;
+    }
+    return value;
+}
 /***** end of definition *********************************************************/
 
 #endif

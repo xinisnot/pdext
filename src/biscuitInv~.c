@@ -35,16 +35,16 @@ t_int* biscuitInv_tilde_perform(t_int *_w) {
     int vecsize           = (int)(_w[13]);
 
     while(vecsize--) {
-        x->active    = *in2++;
-        x->digits[7] = ((*in3++)!=0);
-        x->digits[6] = ((*in4++)!=0);
-        x->digits[5] = ((*in5++)!=0);
-        x->digits[4] = ((*in6++)!=0);
-        x->digits[3] = ((*in7++)!=0);
-        x->digits[2] = ((*in8++)!=0);
-        x->digits[1] = ((*in9++)!=0);
-        x->digits[0] = ((*in10++)!=0);
-        *out1++      = (x->active==0) ? *in1++ : biscuitInv(*in1++, x->digits);
+        x->active         = *in2++;
+        x->digits[7]      = ((*in3++)!=0);
+        x->digits[6]      = ((*in4++)!=0);
+        x->digits[5]      = ((*in5++)!=0);
+        x->digits[4]      = ((*in6++)!=0);
+        x->digits[3]      = ((*in7++)!=0);
+        x->digits[2]      = ((*in8++)!=0);
+        x->digits[1]      = ((*in9++)!=0);
+        x->digits[0]      = ((*in10++)!=0);
+        *out1++           = (x->active==0) ? *in1++ : biscuitInv(*in1++, x->digits);
     }
 
     return (_w+14);
@@ -92,14 +92,14 @@ void* biscuitInv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
                 pd_float((t_pd*)x->secondInlets[0], atom_getfloat(_argv));
                 break;
         case 0: x->active = atom_getfloat(_argv);
-                x->digits[7] = (atom_getfloat(_argv+1)!=0);
-                x->digits[6] = (atom_getfloat(_argv+2)!=0);
-                x->digits[5] = (atom_getfloat(_argv+3)!=0);
-                x->digits[4] = (atom_getfloat(_argv+4)!=0);
-                x->digits[3] = (atom_getfloat(_argv+5)!=0);
-                x->digits[2] = (atom_getfloat(_argv+6)!=0);
-                x->digits[1] = (atom_getfloat(_argv+7)!=0);
-                x->digits[0] = (atom_getfloat(_argv+8)!=0);
+                x->digits[7] = 0;
+                x->digits[6] = 0;
+                x->digits[5] = 0;
+                x->digits[4] = 0;
+                x->digits[3] = 0;
+                x->digits[2] = 0;
+                x->digits[1] = 0;
+                x->digits[0] = 0;
                 pd_float((t_pd*)x->secondInlets[0], 0);
                 pd_float((t_pd*)x->secondInlets[1], 0);
                 pd_float((t_pd*)x->secondInlets[2], 0);

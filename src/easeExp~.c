@@ -1,7 +1,6 @@
 // Copyright (c) 2020 xin.
 
-#include <m_pd.h>
-#include "common/operator.h"
+#include "common/DSPheart.h"
 
 /***** class declaration *********************************************************/
 
@@ -9,90 +8,40 @@ static t_class *easeExp_tilde_class;
 
 typedef struct _easeExp_tilde {
     t_object    x_obj;
-    t_inlet     *inlet2curve;
-    t_inlet     *inlet3width;
-    t_inlet     *inlet4easeMode;
-    t_inlet     *inlet5flip;
-    t_outlet    *outlet1;
+    t_inlet     *secondInlets[4];
+    // t_inlet     *secondInlets[0];
+    // t_inlet     *secondInlets[1];
+    // t_inlet     *secondInlets[2];
+    // t_inlet     *secondInlets[3];
+    t_outlet    *outlet;
     t_float     dummy;
 
     t_sample    curve;
     t_sample    width;
-    int         easeMode;
+    int         easeType;
     int         flip;
 
 } t_easeExp_tilde;
-
-/***** internal method ***********************************************************/
-
-void setCurve(t_easeExp_tilde *_x, t_floatarg _curve) {
-    _x->curve = _curve;
-}
-
-t_sample getCurve(t_easeExp_tilde *_x) {
-    return _x->curve;
-}
-
-void setWidth(t_easeExp_tilde *_x, t_floatarg _width) {
-    _x->width = _width;
-}
-
-t_sample getWidth(t_easeExp_tilde *_x) {
-    return _x->width;
-}
-
-void setEaseMode(t_easeExp_tilde *_x, t_floatarg _mode) {
-    _x->easeMode = _mode;
-}
-
-int getEaseMode(t_easeExp_tilde *_x) {
-    return _x->easeMode;
-}
-
-void setFlip(t_easeExp_tilde *_x, t_floatarg _flip) {
-    _x->flip = _flip;
-}
-
-int getFlip(t_easeExp_tilde *_x) {
-    return _x->flip;
-}
-
-t_sample signalOut(t_easeExp_tilde *_x, t_sample _current) {
-    t_sample value = (getFlip(_x)==0) ? _current : flip4U(_current);
-
-    value = (getFlip(_x)==0) ? shiftHalf4U(value, getWidth(_x)) : shiftHalf4U(value, 1-getWidth(_x));
-
-    switch(getEaseMode(_x)) {
-        default:
-        case 0: value = easeInExponent4U(value, getCurve(_x));      break;
-        case 1: value = easeOutExponent4U(value, getCurve(_x));     break;
-        case 2: value = easeInOutExponent4U(value, getCurve(_x));   break;
-        case 3: value = easeOutInExponent4U(value, getCurve(_x));   break;
-        case 4: value = easeInInExponent4U(value, getCurve(_x));    break;
-        case 5: value = easeOutOutExponent4U(value, getCurve(_x));  break;
-    }
-    return value;
-}
 
 /***** DSP ***********************************************************************/
 
 t_int* easeExp_tilde_perform(t_int *_w) {
     t_easeExp_tilde *x = (t_easeExp_tilde*)(_w[1]);
-    t_sample *in1        = (t_sample*)(_w[2]);
-    t_sample *in2        = (t_sample*)(_w[3]);
-    t_sample *in3        = (t_sample*)(_w[4]);
-    t_sample *in4        = (t_sample*)(_w[5]);
-    t_sample *in5        = (t_sample*)(_w[6]);
-    t_sample *out1       = (t_sample*)(_w[7]);
-    int vecsize          = (int)(_w[8]);
+    t_sample *in1      = (t_sample*)(_w[2]);
+    t_sample *in2      = (t_sample*)(_w[3]);
+    t_sample *in3      = (t_sample*)(_w[4]);
+    t_sample *in4      = (t_sample*)(_w[5]);
+    t_sample *in5      = (t_sample*)(_w[6]);
+    t_sample *out1     = (t_sample*)(_w[7]);
+    int vecsize        = (int)(_w[8]);
 
     while(vecsize--) {
-        setCurve(x, *in2++);
-        setWidth(x, *in3++);
-        setEaseMode(x, *in4++);
-        setFlip(x, *in5++);
+        x->width       = *in2++;
+        x->curve       = *in3++;
+        x->easeType    = (int)*in4++;
+        x->flip        = ((*in5++)!=0);
         
-        *out1++ = signalOut(x, *in1++);
+        *out1++        = easeExp(*in1++, x->width, x->curve, x->flip, x->easeType);
     }
 
     return (_w+9);
@@ -104,34 +53,34 @@ void easeExp_tilde_dsp(t_easeExp_tilde *_x, t_signal **_sp) {
 
 /***** constructor & destructor **************************************************/
 
-void* easeExp_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
+void* easeExp_tilde_new(t_symbol *_s, int _argc, t_atom *_argv) {
     t_easeExp_tilde *x = (t_easeExp_tilde*)pd_new(easeExp_tilde_class);
-    x->inlet2curve       = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet3width       = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet4easeMode    = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->inlet5flip        = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
-    x->outlet1           = outlet_new(&x->x_obj, &s_signal);
+    x->secondInlets[0] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[1] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[2] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->secondInlets[3] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
+    x->outlet          = outlet_new(&x->x_obj, &s_signal);
 
     switch(_argc)
     {
         default:
-        case 4: setFlip(x, atom_getfloat(_argv+3));
-                pd_float((t_pd*)x->inlet5flip, atom_getfloat(_argv+3));
-        case 3: setEaseMode(x, atom_getfloat(_argv+2));
-                pd_float((t_pd*)x->inlet4easeMode, atom_getfloat(_argv+2));
-        case 2: setWidth(x, atom_getfloat(_argv+1));
-                pd_float((t_pd*)x->inlet3width, atom_getfloat(_argv+1));
-        case 1: setCurve(x, atom_getfloat(_argv));
-                pd_float((t_pd*)x->inlet2curve, atom_getfloat(_argv));
+        case 4: x->flip = atom_getfloat(_argv+3);
+                pd_float((t_pd*)x->secondInlets[3], atom_getfloat(_argv+3));
+        case 3: x->easeType = atom_getfloat(_argv+2);
+                pd_float((t_pd*)x->secondInlets[2], atom_getfloat(_argv+2));
+        case 2: x->curve = atom_getfloat(_argv+1);
+                pd_float((t_pd*)x->secondInlets[1], atom_getfloat(_argv+1));
+        case 1: x->width = atom_getfloat(_argv);
+                pd_float((t_pd*)x->secondInlets[0], atom_getfloat(_argv));
                 break;
-        case 0: setFlip(x, 0);
-                setEaseMode(x, 0);
-                setWidth(x, 0.5);
-                setCurve(x, 0);
-                pd_float((t_pd*)x->inlet5flip, 0);
-                pd_float((t_pd*)x->inlet4easeMode, 0);
-                pd_float((t_pd*)x->inlet3width, 0.5);
-                pd_float((t_pd*)x->inlet2curve, 0);
+        case 0: x->flip = 0;
+                x->easeType = 0;
+                x->curve = 0;
+                x->width = 0.5;
+                pd_float((t_pd*)x->secondInlets[3], 0);
+                pd_float((t_pd*)x->secondInlets[2], 0);
+                pd_float((t_pd*)x->secondInlets[1], 0);
+                pd_float((t_pd*)x->secondInlets[0], 0.5);
                 break;
     }
 
@@ -139,11 +88,11 @@ void* easeExp_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
 }
 
 void easeExp_tilde_free(t_easeExp_tilde *_x) {
-    inlet_free(_x->inlet2curve);
-    inlet_free(_x->inlet3width);
-    inlet_free(_x->inlet4easeMode);
-    inlet_free(_x->inlet5flip);
-    outlet_free(_x->outlet1);
+    inlet_free(_x->secondInlets[0]);
+    inlet_free(_x->secondInlets[1]);
+    inlet_free(_x->secondInlets[2]);
+    inlet_free(_x->secondInlets[3]);
+    outlet_free(_x->outlet);
 }
 
 /***** class setup ***************************************************************/
