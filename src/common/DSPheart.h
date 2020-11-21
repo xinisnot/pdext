@@ -12,6 +12,7 @@
 FTYPE biscuitInv(FTYPE _in, int* _digits);
 FTYPE biscuitMute(FTYPE _in, int* _digits);
 FTYPE easeExp(FTYPE _in, FTYPE _width, FTYPE _curve, int _flip, int _easeType);
+FTYPE clockPulse(FTYPE _n0, FTYPE _n1);
 
 /***** function ******************************************************************/
 
@@ -43,6 +44,11 @@ inline FTYPE easeExp(FTYPE _in, FTYPE _width, FTYPE _curve, int _flip, int _ease
     }
     return value;
 }
+
+inline FTYPE clockPulse(FTYPE _n0, FTYPE _n1) {
+    return (_n0>=_n1) ? 0 : 1;
+}
+
 /***** end of definition *********************************************************/
 
 #endif

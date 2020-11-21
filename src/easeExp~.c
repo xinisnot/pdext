@@ -9,10 +9,6 @@ static t_class *easeExp_tilde_class;
 typedef struct _easeExp_tilde {
     t_object    x_obj;
     t_inlet     *secondInlets[4];
-    // t_inlet     *secondInlets[0];
-    // t_inlet     *secondInlets[1];
-    // t_inlet     *secondInlets[2];
-    // t_inlet     *secondInlets[3];
     t_outlet    *outlet;
     t_float     dummy;
 

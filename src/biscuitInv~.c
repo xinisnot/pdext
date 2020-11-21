@@ -11,10 +11,9 @@ typedef struct _biscuitInv_tilde {
     t_inlet     *secondInlets[9];
     t_outlet    *outlet;
     t_float     dummy;
-
+    
     int         active;
     int         digits[8];
-
 } t_biscuitInv_tilde;
 
 /***** DSP ***********************************************************************/

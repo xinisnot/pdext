@@ -8,6 +8,8 @@ all:	clear \
 		easeExp~ \
 		biscuitMute~ \
 		biscuitInv~ \
+		clockPulse~ \
+		sinusoid~ \
 		clean
 
 easeExp~:
@@ -17,6 +19,12 @@ biscuitMute~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 biscuitInv~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+clockPulse~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+sinusoid~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup

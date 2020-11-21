@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <limits.h>
 
 #if (PDFLAG==1) || (PDFLAG==2)
 #   include <m_pd.h>
@@ -94,6 +95,8 @@ FTYPE compHalf4U(FTYPE _in, FTYPE _amount);
 FTYPE compQuarter4U(FTYPE _in, FTYPE _amount);
 FTYPE phaseTriangle(FTYPE _in);
 FTYPE reduceQuantum4U(FTYPE _in, int _quantum);
+
+FTYPE linearInterpolation(FTYPE _in1, FTYPE _in2, FTYPE _weight);
 
 /***** function - arithmetic *****************************************************/
 
@@ -370,6 +373,11 @@ inline FTYPE phaseTriangle(FTYPE _in) {
 
 inline FTYPE reduceQuantum4U(FTYPE _in, int _quantum) {
     return roundFloor(_in, reciprocal(_quantum)) * reciprocal(1-reciprocal(_quantum));
+}
+
+
+inline FTYPE linearInterpolation(FTYPE _in1, FTYPE _in2, FTYPE _weight) {
+    return _in1*(1-_weight) + _in2*_weight;
 }
 
 /***** end of definition *********************************************************/
