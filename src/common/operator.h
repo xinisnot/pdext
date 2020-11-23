@@ -53,9 +53,9 @@
 /***** function prototype ********************************************************/
 
 FTYPE add(FTYPE _v1, FTYPE _v2);
-FTYPE sub(FTYPE _v1, FTYPE _v2);
-FTYPE mul(FTYPE _v1, FTYPE _v2);
-FTYPE div(FTYPE _v1, FTYPE _v2);
+FTYPE subtract(FTYPE _v1, FTYPE _v2);
+FTYPE multiply(FTYPE _v1, FTYPE _v2);
+FTYPE divide(FTYPE _v1, FTYPE _v2);
 FTYPE modulo(FTYPE _v1, FTYPE _v2);
 FTYPE meanA(FTYPE *_x, int _len);
 FTYPE meanG(FTYPE *_x, int _len);
@@ -104,15 +104,15 @@ inline FTYPE add(FTYPE _v1, FTYPE _v2) {
     return _v1 + _v2;
 }
 
-inline FTYPE sub(FTYPE _v1, FTYPE _v2) {
+inline FTYPE subtract(FTYPE _v1, FTYPE _v2) {
     return _v1 - _v2;
 }
 
-inline FTYPE mul(FTYPE _v1, FTYPE _v2) {
+inline FTYPE multiply(FTYPE _v1, FTYPE _v2) {
     return _v1 * _v2;
 }
 
-inline FTYPE div(FTYPE _v1, FTYPE _v2) {
+inline FTYPE divide(FTYPE _v1, FTYPE _v2) {
     return (_v2!=0) ? _v1/_v2 : FMAX;
 }
 
@@ -125,7 +125,7 @@ inline int sign(FTYPE _in) {
 }
 
 inline FTYPE reciprocal(FTYPE _in) {
-    return div(1, _in);
+    return divide(1, _in);
 }
 
 inline FTYPE meanA(FTYPE *_x, int _len) {
@@ -185,7 +185,7 @@ inline FTYPE convertU2B(FTYPE _in) {
 }
 
 inline FTYPE scaleX2U(FTYPE _in, FTYPE _min, FTYPE _max) {
-    return div(_in-_min, _max-_min);
+    return divide(_in-_min, _max-_min);
 }
 
 inline FTYPE scaleU2X(FTYPE _in, FTYPE _min, FTYPE _max) {

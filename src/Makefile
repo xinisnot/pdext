@@ -10,6 +10,7 @@ all:	clear \
 		biscuitInv~ \
 		clockPulse~ \
 		sinusoid~ \
+		triangle~ \
 		clean
 
 easeExp~:
@@ -25,6 +26,9 @@ clockPulse~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 sinusoid~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+triangle~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup
