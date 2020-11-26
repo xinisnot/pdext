@@ -1,6 +1,0 @@
-#N canvas 1046 355 529 123 12;
-#X obj 41 53 phasor~ 1;
-#X obj 41 76 xin/clockPulse~;
-#X text 21 16 Detect the transition to a negative number in the clock
-signal., f 64;
-#X connect 0 0 1 0;

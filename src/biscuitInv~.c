@@ -1,6 +1,6 @@
 // Copyright (c) 2020 xin.
 
-#include "common/DSPheart.h"
+#include "common/heart.h"
 
 /***** class declaration *********************************************************/
 
@@ -69,6 +69,25 @@ void* biscuitInv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
     x->secondInlets[8] = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
     x->outlet          = outlet_new(&x->x_obj, &s_signal);
 
+     x->active = 0;
+     x->digits[7] = 0;
+     x->digits[6] = 0;
+     x->digits[5] = 0;
+     x->digits[4] = 0;
+     x->digits[3] = 0;
+     x->digits[2] = 0;
+     x->digits[1] = 0;
+     x->digits[0] = 0;
+     pd_float((t_pd*)x->secondInlets[0], 0);
+     pd_float((t_pd*)x->secondInlets[1], 0);
+     pd_float((t_pd*)x->secondInlets[2], 0);
+     pd_float((t_pd*)x->secondInlets[3], 0);
+     pd_float((t_pd*)x->secondInlets[4], 0);
+     pd_float((t_pd*)x->secondInlets[5], 0);
+     pd_float((t_pd*)x->secondInlets[6], 0);
+     pd_float((t_pd*)x->secondInlets[7], 0);
+     pd_float((t_pd*)x->secondInlets[8], 0);
+
     switch(_argc) {
         default:
         case 9: x->digits[0] = (atom_getfloat(_argv+8)!=0);
@@ -90,25 +109,7 @@ void* biscuitInv_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
         case 1: x->active = atom_getfloat(_argv);
                 pd_float((t_pd*)x->secondInlets[0], atom_getfloat(_argv));
                 break;
-        case 0: x->active = atom_getfloat(_argv);
-                x->digits[7] = 0;
-                x->digits[6] = 0;
-                x->digits[5] = 0;
-                x->digits[4] = 0;
-                x->digits[3] = 0;
-                x->digits[2] = 0;
-                x->digits[1] = 0;
-                x->digits[0] = 0;
-                pd_float((t_pd*)x->secondInlets[0], 0);
-                pd_float((t_pd*)x->secondInlets[1], 0);
-                pd_float((t_pd*)x->secondInlets[2], 0);
-                pd_float((t_pd*)x->secondInlets[3], 0);
-                pd_float((t_pd*)x->secondInlets[4], 0);
-                pd_float((t_pd*)x->secondInlets[5], 0);
-                pd_float((t_pd*)x->secondInlets[6], 0);
-                pd_float((t_pd*)x->secondInlets[7], 0);
-                pd_float((t_pd*)x->secondInlets[8], 0);
-                break;
+        case 0: break;
     }
 
     return (void*)x;

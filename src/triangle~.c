@@ -1,13 +1,11 @@
 // Copyright (c) 2020 xin.
 
-#include "common/DSPheart.h"
-#include "common/tableGen.h"
-#include <stdlib.h>
+#include "common/table.h"
 
 /***** class declaration *********************************************************/
 
 static t_class *triangle_tilde_class;
-static t_sample *triTable;
+static t_sample *table;
 
 typedef struct _triangle_tilde {
     t_object    x_obj;
@@ -23,18 +21,7 @@ t_int* triangle_tilde_perform(t_int *_w) {
     t_sample *out1      = (t_sample*)(_w[3]);
     int vecsize         = (int)(_w[4]);
 
-    t_sample value;
-    int idx0;
-    int idx1;
-    t_sample weight;
-
-    while(vecsize--) {
-        value   = *in1++ * (TABLE_INDEX+1);
-        idx0    = (int)FLOOR(value);
-        idx1    = (idx0!=TABLE_INDEX) ? idx0+1 : 0;
-        weight  = value - idx0;
-        *out1++ = linearInterpolation(triTable[idx0], triTable[idx1], weight);
-    }
+    while(vecsize--)    *out1++ = readTableLinear(table, *in1++);
 
     return (_w+5);
 }
@@ -58,13 +45,8 @@ void triangle_tilde_free(t_triangle_tilde *_x) {
 
 /***** class setup ***************************************************************/
 
-void allocateTable() {
-    if(triTable) return;
-    triTable = (t_sample*)calloc(TABLE_INDEX+1, sizeof(t_sample));
-}
-
-void freeTable() {
-    free(triTable);
+void freefn() {
+    freeTable(&table);
 }
 
 void triangle_tilde_setup(void) {
@@ -73,8 +55,6 @@ void triangle_tilde_setup(void) {
     class_addmethod(triangle_tilde_class, (t_method)triangle_tilde_dsp, gensym("dsp"), A_CANT, 0);
     class_sethelpsymbol(triangle_tilde_class, gensym("triangle~"));
     CLASS_MAINSIGNALIN(triangle_tilde_class, t_triangle_tilde, dummy);
-
-    class_setfreefn(triangle_tilde_class, freeTable);
-    allocateTable();
-    generateTableTriangle(triTable);
+    class_setfreefn(triangle_tilde_class, freefn);
+    callocTableTriangle(&table);
 }

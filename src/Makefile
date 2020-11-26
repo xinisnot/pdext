@@ -5,31 +5,43 @@ CFLAGS4BIN = -dynamic -bundle -undefined dynamic_lookup -arch x86_64
 
 .PHONY: all
 all:	clear \
-		easeExp~ \
-		biscuitMute~ \
+		shapeU~ \
+		easeExpU~ \
+		scale~ \
+		latch~ \
 		biscuitInv~ \
-		clockPulse~ \
+		biscuitMask~ \
 		sinusoid~ \
 		triangle~ \
+		clock~ \
 		clean
 
-easeExp~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+shapeU~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-biscuitMute~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+easeExpU~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+scale~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+latch~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 biscuitInv~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
-clockPulse~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+biscuitMask~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 sinusoid~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 triangle~:
-	@$(CC) $(CFLAGS4OBJ) PDFLAG=2 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+clock~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup
 
