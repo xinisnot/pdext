@@ -51,6 +51,7 @@ void freefn() {
 
 void triangle_tilde_setup(void) {
     triangle_tilde_class = class_new(gensym("triangle~"), (t_newmethod)triangle_tilde_new, (t_method)triangle_tilde_free, sizeof(t_triangle_tilde), CLASS_DEFAULT, 0);
+    table                = NULL;
 
     class_addmethod(triangle_tilde_class, (t_method)triangle_tilde_dsp, gensym("dsp"), A_CANT, 0);
     class_sethelpsymbol(triangle_tilde_class, gensym("triangle~"));

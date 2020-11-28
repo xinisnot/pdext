@@ -52,6 +52,7 @@ void freefn() {
 
 void sinusoid_tilde_setup(void) {
     sinusoid_tilde_class = class_new(gensym("sinusoid~"), (t_newmethod)sinusoid_tilde_new, (t_method)sinusoid_tilde_free, sizeof(t_sinusoid_tilde), CLASS_DEFAULT, 0);
+    table                = NULL;
     twopi                = getTWOPI();
 
     class_addmethod(sinusoid_tilde_class, (t_method)sinusoid_tilde_dsp, gensym("dsp"), A_CANT, 0);

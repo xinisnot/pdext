@@ -14,6 +14,7 @@ all:	clear \
 		sinusoid~ \
 		triangle~ \
 		clock~ \
+		clicker~ \
 		clean
 
 shapeU~:
@@ -41,6 +42,9 @@ triangle~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 clock~:
+	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
+
+clicker~:
 	@$(CC) $(CFLAGS4OBJ) PDFLAG=1 $@.c && $(CC) $(CFLAGS4BIN) -o $@.pd_darwin $@.o
 
 ## preparation and cleanup

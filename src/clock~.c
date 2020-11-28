@@ -16,9 +16,7 @@ typedef struct _clock_tilde {
     t_sample    bpm;
     t_sample    base;
     t_sample    dot;
-    t_sample    active;
 
-    t_sample    current;
     t_sample    last;
 } t_clock_tilde;
 
@@ -35,26 +33,27 @@ t_int* clock_tilde_perform(t_int *_w) {
     t_sample *out2   = (t_sample*)(_w[8]);
     int vecsize      = (int)(_w[9]);
 
+    t_sample value = x->last;
+
     while(vecsize--) {
-        x->active = (*in1++)!=0;
-        x->bpm    = *in2++;
-        x->base   = *in3++; 
-        x->dot    = *in4++;
+        x->bpm      = *in2++;
+        x->base     = *in3++; 
+        x->dot      = *in4++;
 
-        if((*in5++)==1) {
-            x->current = 1;
-            x->last    = 1;
+        if((*in5++)==1) value = 1;
+
+        if((*in1++)!=0) {
+            value   += divide(x->bpm, 15*SR*(x->base + x->base*(x->dot!=0)*0.5));
+            value   = (1 < value) ? 1-value : value;
         }
 
-        if(x->active!=0) {
-            x->current = x->last + divide(x->bpm, 15*SR*(x->base + x->base*(x->dot!=0)*0.5));
-            x->current = (1 < x->current) ? 1 - x->current : x->current;
-        }
+        *out1++     = value;
+        *out2++     = (value - x->last)<0;
 
-        *out1++    = x->current;
-        *out2++    = (x->current - x->last)<0;
-        x->last    = x->current;
+        x->last = value;
     }
+
+    // x->last = value;
 
     return (_w+10);
 }
@@ -74,11 +73,9 @@ void* clock_tilde_new(t_symbol *_s, int _argc, t_atom  *_argv) {
     x->outlets[0]      = outlet_new(&x->x_obj, &s_signal);
     x->outlets[1]      = outlet_new(&x->x_obj, &s_signal);
 
-    x->active          = 0;
     x->bpm             = 0;
     x->base            = 4;
     x->dot             = 0;
-    x->current         = 1;
     x->last            = 1;
 
     pd_float((t_pd*)x->secondInlets[0], x->bpm);
